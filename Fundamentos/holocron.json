@@ -1,0 +1,65 @@
+{
+  "saga": "Star Wars",
+  "character": [
+    {
+      "name": "Yoda",
+      "quote": "Hazlo o dejalo, no hay intentos.",
+      "img": "https://hips.hearstapps.com/hmg-prod/images/yoda-consejo-jedi-1568794362.jpg?crop=1xw:1xh;center,top"
+    },
+    {
+      "name": "Obi-Wan Kenobi",
+      "quote": "Solo un Sith es tan radical tomando decisiones.",
+      "img": "https://images.ecestaticos.com/bEVd7wL85T5xtFwhDdF-1dvgGkA=/31x0:2193x1214/1200x1200/filters:fill(white):format(jpg)/f.elconfidencial.com%2Foriginal%2F221%2F064%2F8ce%2F2210648ce6b80e4416e48b65a44f828c.jpg"
+    },
+    {
+      "name": "Darth Vader",
+      "quote": "Nunca subestimes el poder del lado oscuro.",
+      "img": "https://cdn.britannica.com/18/249618-050-82D8AC82/Darth-Vader-Star-Wars-Empire-Strikes-Back-Publicity-Still.jpg"
+    },
+    {
+      "name": "Qui-Gon Jinn",
+      "quote": "Siempre hay un pez más grande.",
+      "img": "https://www.denofgeek.com/wp-content/uploads/2022/04/star-wars-qui-gon-jinn-liam-neeson.jpg?resize=768%2C432"
+    },
+    {
+      "name": "Padme Amidala",
+      "quote": "y así muere la libertad, con un fuerte aplauso.",
+      "img": "https://www.liveabout.com/thmb/fdeb8q0n9MSzrJ2uWTjIuE4dzIM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/EP3-IA-40862_R_8x10-56a83a323df78cf7729d2847.jpg"
+    },
+    {
+      "name": "Mando",
+      "quote": "El camino asi es.",
+      "img": "https://media.vandalsports.com/i/640x360/8-2025/202581285351_1.jpg"
+    }
+  ],
+  "planet": [
+    {
+      "name": "Yavin 4",
+      "img": "https://upload.wikimedia.org/wikipedia/en/7/74/Star_Wars_Planet_Yavin_with_Moon.jpg"
+    },
+    {
+      "name": "Tatooine",
+      "img": "https://upload.wikimedia.org/wikipedia/en/6/6d/Tatooine_%28fictional_desert_planet%29.jpg"
+    },
+    {
+      "name": "Coruscant",
+      "img": "https://upload.wikimedia.org/wikipedia/en/4/42/Coruscant.png"
+    },
+    {
+      "name": "Hoth",
+      "img": "https://upload.wikimedia.org/wikipedia/en/d/d2/Hothplanetsurface.jpg"
+    },
+    {
+      "name": "Naboo",
+      "img": "https://upload.wikimedia.org/wikipedia/tr/f/f2/Nabooplanet.jpg"
+    },
+    {
+      "name": "Estrella de la Muerte",
+      "img": "https://upload.wikimedia.org/wikipedia/en/f/f9/Death_star1.png"
+    },
+    {
+      "name": "Espacio profundo",
+      "img": "https://img.freepik.com/premium-photo/stars-galaxy-outer-space-sky-night-universe_146539-175.jpg?semt=ais_hybrid&w=740&q=80"
+    }
+  ]
+}

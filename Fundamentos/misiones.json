@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Mision Escarlata Escasa",
+    "description": "Infiltrarse en el Alba Escarlata como un mercenario y sabotear sus suministros.",
+    "reward": 500000,
+    "state": "Disponible"
+  },
+  {
+    "id": 2,
+    "title": "Mision Costa Secreta",
+    "description": "Infiltrarse en la base militar de Scarif y obtener los planos de la Estrella de la Muerte.",
+    "reward": 1500000,
+    "state": "Disponible"
+  },
+  {
+    "id": 3,
+    "title": "Mision Rescate del Anfibio",
+    "description": "Rescatar al espia trandoshano retenido en la prisión clandestina de Kessel.",
+    "reward": 350000,
+    "state": "Disponible"
+  }
+]

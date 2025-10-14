@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "username": "ahsoka",
+    "password": "$2b$10$xAW1gVYj8J8MhjL4cNTDSOQOVfr2YGUe3rWOdmLbjy0OodqTt4ULK",
+    "descodificado": "snips"
+  },
+  {
+    "id": 2,
+    "username": "barris",
+    "password": "$2b$10$GYiSMoItaER/O6aaDUAWyO3vtd128Td4QAJFJNhA5ZDYBTW8iZGn6",
+    "descodificado": "odiojedi"
+  }
+]
