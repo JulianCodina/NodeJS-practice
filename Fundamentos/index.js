@@ -4,8 +4,11 @@ const express = require("express");
 const fs = require("fs").promises;
 const path = require("path");
 const holocron = require("./holocron.json");
-const misiones = require("./misiones.json");
+let misiones = require("./misiones.json");
 let users = require("./users.json");
+const axios = require("axios");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const Port = process.env.PORT ?? 3000;
 
@@ -15,12 +18,25 @@ app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-let LoggedUser = "Invitado";
+let LoggedUser = "";
 
 app.get("/", (req, res) => {
   res.send(`
-    <h1>Bienvenido ${LoggedUser}</h1>
-    <h4>Elige una ruta</h4>
+    <h1>Bienvenido ${LoggedUser || "Invitado"}</h1>
+    ${
+      !LoggedUser &&
+      `<a href="/login" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">
+        Ingresar al sistema
+      </a>`
+    }
+    ${
+      LoggedUser &&
+      `<a href="/logout" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">
+        Cerrar sesión
+      </a>`
+    }
+    <hr/>
+    <h4>Elige una accion</h4>
     <a href="/consejos" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">
         Ver Consejos
     </a>
@@ -33,8 +49,8 @@ app.get("/", (req, res) => {
     <a href="/misiones" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">
         Ver misiones
     </a>
-    <a href="/login" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">
-        Registrarse
+    <a href="/clima/theed" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">
+        Ver Climas
     </a>
   `);
 });
@@ -97,23 +113,43 @@ app.get("/planetas/:index", (req, res) => {
   }
 });
 
-app.get("/divisa", (req, res) => {
-  const cantidad = req.query.cantidad || 0;
+// Un credito imperial equivale a 4 dolares
+app.get("/divisa/", async (req, res) => {
+  const cantidad = parseFloat(req.query.cantidad) || 0;
+  const divisa = req.query.divisa || "USD";
+
+  let resultado = "";
+  let error = "";
   if (cantidad > 0) {
-    return res.send(`<h1>Convertir creditos espaciales</h1>
+    if (divisa != "USD") {
+      const response = await axios.get(
+        `https://api.frankfurter.app/latest?from=USD&to=${divisa}`
+      );
+      const tasa = response.data.rates[divisa];
+      const conversion = ((cantidad * 4) / tasa).toFixed(2);
+      resultado = `<h3>Son ${conversion} ${divisa}</h3>`;
+    } else {
+      resultado = `<h3>Son ${cantidad * 4} Dolares</h3>`;
+    }
+  }
+  if (cantidad && cantidad <= 0) {
+    error = `<h3 style="color: red;">La cantidad debe ser mayor a 0</h3>`;
+  }
+  return res.send(`
+      <h1>Convertir creditos Imperiales</h1>
       <form action="/divisa" method="GET">
         <input type="number" name="cantidad" id="cantidad" placeholder="Cantidad" value="${cantidad}" required>
-      <button type="submit" style="background-color: lightblue; border: none; padding: 3px;">Convertir</button>
+        <select name="divisa" id="divisa">
+          <option value='USD'>Dolares</option>
+          <option value='BRL'>Reales</option>
+          <option value='EUR'>Euros</option>
+          <option value='MXN'>Pesos</option>
+        </select>
+        <button type="submit" style="background-color: lightblue; border: none; padding: 3px;">Convertir</button>
       </form>
-      <h3>Son ${cantidad * 4} dolares</h3>
+    ${resultado && resultado}
+    ${error && error}
       <a href='/' style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">Volver</a>`);
-  }
-  res.send(`<h1>Convertir creditos espaciales</h1>
-    <form action="/divisa" method="GET">
-      <input type="number" name="cantidad" id="cantidad" placeholder="Cantidad" required>
-      <button type="submit" style="background-color: lightblue; border: none; padding: 3px;">Convertir</button>
-    </form>
-    <a href='/' style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">Volver</a>`);
 });
 
 app.get("/misiones", (req, res) => {
@@ -253,15 +289,17 @@ app.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
     const newUser = {
       id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
       username,
       password: hashedPassword,
       descodificado: password,
+      role: "padawan",
+      created_at: new Date().toISOString().split("T")[0],
     };
 
     users.push(newUser);
+    await fs.writeFile("users.json", JSON.stringify(users, null, 2));
 
     LoggedUser = username;
     res.redirect("/");
@@ -269,6 +307,62 @@ app.post("/register", async (req, res) => {
     console.error("Error al registrar usuario:", error);
     res.status(500).send("Error al registrar el usuario");
   }
+});
+
+app.get("/logout", (req, res) => {
+  LoggedUser = "";
+  res.redirect("/");
+});
+
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+app.get("/clima/:place", async (req, res) => {
+  const { place } = req.params;
+  let CIUDAD = place;
+  let temperatura;
+  let humedad;
+  let descripcion;
+  try {
+    if (place == "mos_eisley") {
+      CIUDAD = "Egypt";
+    } else {
+      CIUDAD = "Buenos Aires";
+    }
+    const clima = await axios.get(
+      `http://api.openweathermap.org/data/2.5/weather?q=${CIUDAD}&appid=${API_KEY}&units=metric&lang=es`
+    );
+
+    temperatura = clima.data.main.temp;
+    humedad = clima.data.main.humidity;
+    descripcion = clima.data.weather[0].description;
+  } catch (error) {
+    console.error(
+      "Error al obtener el clima:",
+      error.response?.data?.message || error.message
+    );
+  }
+
+  res.send(`
+    <h1>Clima de Theed</h1>
+    ${
+      place == "mos_eisley"
+        ? `<h3>Mos Eisley, Puerto espacial de Tatooine</h3>`
+        : "<h3>Theed, Capital de Naboo</h3>"
+    }
+    ${
+      place == "mos_eisley"
+        ? `<img style="width: auto; height: 100px;" src="https://res.cloudinary.com/jerrick/image/upload/d_642250b563292b35f27461a7.png,f_jpg,fl_progressive,q_auto,w_1024/609803afa0c320001d90ece2.jpg" />`
+        : `<img style="width: auto; height: 100px;" src="https://www.tonica.la/__export/1676938173244/sites/debate/img/2023/02/20/star-wars-naboo.jpg_1758632412.jpg" />`
+    }
+    <p>Temperatura: ${temperatura}°C</p>
+    <p>Humedad: ${humedad}%</p>
+    <p>Descripción: ${descripcion}</p>
+    ${
+      place == "mos_eisley"
+        ? `<a href="/clima/theed" style="text-decoration: none; color: black; padding: 5px; background-color: lightblue; margin: 5px;">Ver Theed</a>`
+        : `<a href="/clima/mos_eisley" style="text-decoration: none; color: black; padding: 5px; background-color: lightblue; margin: 5px;">Ver Mos Eisley</a>`
+    }
+    <a href="/" style="text-decoration: none; color: black; padding: 5px; background-color: lightgrey; margin: 5px;">Volver</a>
+    `);
 });
 
 app.use((req, res) => {

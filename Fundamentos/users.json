@@ -3,12 +3,16 @@
     "id": 1,
     "username": "ahsoka",
     "password": "$2b$10$xAW1gVYj8J8MhjL4cNTDSOQOVfr2YGUe3rWOdmLbjy0OodqTt4ULK",
-    "descodificado": "snips"
+    "descodificado": "snips",
+    "role": "padawan",
+    "created_at": "2025-10-14"
   },
   {
     "id": 2,
     "username": "barris",
     "password": "$2b$10$GYiSMoItaER/O6aaDUAWyO3vtd128Td4QAJFJNhA5ZDYBTW8iZGn6",
-    "descodificado": "odiojedi"
+    "descodificado": "odiojedi",
+    "role": "padawan",
+    "created_at": "2025-10-15"
   }
 ]
