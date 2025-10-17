@@ -1,0 +1,18 @@
+@baseUrl = http://localhost:3000
+
+### Recuperar todos los post
+GET {{baseUrl}}/posts
+
+### Recuperar todos los post por asunto
+GET {{baseUrl}}/posts/search/prueba
+
+### Crear un post con POST
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "subject": "prueba3",
+  "body": "prueba3",
+  "image_url": null,
+  "user_id": 2
+}
