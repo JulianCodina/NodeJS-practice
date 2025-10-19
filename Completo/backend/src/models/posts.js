@@ -4,7 +4,9 @@ export function getAllPosts() {
   return db
     .prepare(
       `
-    SELECT p.*, u.username AS author
+    SELECT p.*, u.id AS userId, u.username AS username,
+      (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
+      (SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replies
     FROM posts p
     LEFT JOIN users u ON u.id = p.user_id
     ORDER BY p.created_at DESC
@@ -13,20 +15,38 @@ export function getAllPosts() {
     .all();
 }
 
+export function getAllPostsById(user_id) {
+  return db
+    .prepare(
+      `
+    SELECT p.*, u.id AS userId, u.username AS username,
+      (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
+      (SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replies
+    FROM posts p
+    LEFT JOIN users u ON u.id = p.user_id
+    WHERE p.user_id = ?
+    ORDER BY p.created_at DESC
+  `
+    )
+    .all(user_id);
+}
+
 export function SearchPost(searchTerm) {
   try {
-    const query = db.prepare(`
-      SELECT *
-      FROM posts
-      WHERE subject LIKE ?
-      ORDER BY created_at DESC
-    `);
+    const query = db.prepare(
+      `
+    SELECT p.*, u.id AS userId, u.username AS username,
+      (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
+      (SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replies
+    FROM posts p
+    LEFT JOIN users u ON u.id = p.user_id
+    WHERE subject LIKE ?
+    ORDER BY p.created_at DESC
+  `
+    );
 
     const searchValue = `%${searchTerm}%`;
-    console.log("Executing search with term:", searchValue);
-
     const result = query.all(searchValue);
-    console.log("Search results:", result.length, "posts found");
 
     return result;
   } catch (error) {
@@ -36,17 +56,44 @@ export function SearchPost(searchTerm) {
   }
 }
 
-export function Searchprueba() {
-  const query = db.prepare("SELECT * FROM posts WHERE subject LIKE '%prueba%'");
-  const result = query.all();
-  console.log("Search results:", result.length, "posts found");
-  return result;
+export function createPost(user_id, subject, content, image_url) {
+  try {
+    const query = db.prepare(
+      "INSERT INTO posts (user_id, subject, content, image_url) VALUES (?, ?, ?, ?)"
+    );
+    const info = query.run(user_id, subject, content, image_url || null);
+
+    return info.lastInsertRowid;
+  } catch (error) {
+    console.error("Error in createPost:", error.message);
+    console.error("Error details:", error);
+    throw error;
+  }
 }
 
-export function createPost(subject, body, imageUrl, userId) {
-  const query = db.prepare(
-    "INSERT INTO posts (subject, body, image_url, user_id) VALUES (?, ?, ?, ?)"
-  );
-  const info = query.run(subject, body, imageUrl, userId);
-  return info.lastInsertRowid;
+export function createManyPost(posts) {
+  const results = [];
+
+  for (const post of posts) {
+    try {
+      const { user_id, subject, content, image_url } = post;
+
+      const postId = createPost(user_id, subject, content, image_url || null);
+      results.push({ success: true, postId });
+    } catch (error) {
+      console.error("Error creating post:", error);
+      results.push({
+        success: false,
+        error: error.message,
+        post: post,
+      });
+    }
+  }
+  return results;
+}
+
+export function deletePost(id) {
+  const query = db.prepare("DELETE FROM posts WHERE id = ?");
+  const info = query.run(id);
+  return info.changes;
 }

@@ -18,13 +18,13 @@ async function testDatabase() {
     //
     console.log("\n2. Insertando usuario...");
     db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)").run(
-      "usuario_prueba2",
+      "Julián",
       "hash123"
     );
     console.log("✅ Usuario insertado");
     //
     //
-    //
+    /*
     console.log("\n3. Insertando post...");
     db.prepare(
       "INSERT INTO posts (subject, body, user_id) VALUES (?, ?, ?)"
@@ -38,11 +38,10 @@ async function testDatabase() {
     console.log("✅ Otro post insertado");
     //
     //
-    //
     console.log("\n4. Consultando posts...");
     const posts = db.prepare("SELECT * FROM posts").all();
     console.log("📝 Posts encontrados:");
-    console.table(posts);
+    console.table(posts);*/
   } catch (error) {
     console.error("❌ Error:", error.message);
   } finally {

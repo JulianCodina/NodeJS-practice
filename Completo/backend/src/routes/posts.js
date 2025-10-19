@@ -1,5 +1,12 @@
 import express from "express";
-import { getAllPosts, SearchPost, createPost } from "../models/posts.js";
+import {
+  getAllPosts,
+  getAllPostsById,
+  SearchPost,
+  createPost,
+  createManyPost,
+  deletePost,
+} from "../models/posts.js";
 
 const router = express.Router();
 
@@ -8,14 +15,14 @@ router.get("/", (req, res) => {
   res.status(200).json(posts);
 });
 
-router.get("/search/:searchTerm", (req, res) => {
+router.get("/user/:user_id", (req, res) => {
+  const posts = getAllPostsById(req.params.user_id);
+  res.status(200).json(posts);
+});
+
+router.get("/:searchTerm", (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    console.log("Received search request for term:", searchTerm);
-
-    if (!searchTerm || searchTerm.trim() === "") {
-      return res.status(400).json({ error: "Search term is required" });
-    }
 
     const posts = SearchPost(searchTerm);
     res.status(200).json(posts);
@@ -28,15 +35,52 @@ router.get("/search/:searchTerm", (req, res) => {
   }
 });
 
-router.get("/searchprueba", (req, res) => {
-  const posts = Searchprueba();
-  res.status(200).json(posts);
+router.post("/", (req, res) => {
+  try {
+    const { user_id, subject, content, image_url } = req.body;
+
+    const postId = createPost(user_id, subject, content, image_url);
+
+    res.status(201).json({
+      success: true,
+      message: "Post created successfully",
+      postId: postId,
+    });
+  } catch (error) {
+    console.error("Error in POST /posts:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to create post",
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
 });
 
-router.post("/", (req, res) => {
-  const { subject, body, imageUrl, userId } = req.body;
-  createPost(subject, body, imageUrl, userId);
-  res.status(201).json({ message: "Post creado" });
+router.post("/many", (req, res) => {
+  try {
+    const posts = req.body;
+
+    const results = createManyPost(posts);
+
+    return res.status(201).json({
+      success: true,
+      message: `Successfully created all ${results.length} posts`,
+      results,
+    });
+  } catch (error) {
+    console.error("Error in POST /posts/many:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to process posts",
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
+});
+
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  deletePost(id);
+  res.status(204).json({ message: "Post eliminado" });
 });
 
 export default router;

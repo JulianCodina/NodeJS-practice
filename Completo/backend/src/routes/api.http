@@ -4,15 +4,107 @@
 GET {{baseUrl}}/posts
 
 ### Recuperar todos los post por asunto
-GET {{baseUrl}}/posts/search/prueba
+GET {{baseUrl}}/posts/re
 
 ### Crear un post con POST
 POST {{baseUrl}}/posts
 Content-Type: application/json
 
 {
-  "subject": "prueba3",
-  "body": "prueba3",
-  "image_url": null,
-  "user_id": 2
+  "user_id": 1,
+  "subject": "Rebeldes encontrados en Dantooine",
+  "content": "Se encontró una célula rebelde en los fines de la capital de Dantooine. Se espera que la fuerza imperial se ponga en marcha. Eviten cualquier contacto con estos terroristas.",
+  "image_url": "https://cdnb.artstation.com/p/assets/images/images/021/471/037/large/garrett-brown-dan-03.jpg?1571808230"
 }
+
+
+### Eliminar un post con DELETE
+DELETE {{baseUrl}}/posts/6
+
+
+### Crear muchos post con POST
+POST {{baseUrl}}/posts/many
+Content-Type: application/json
+
+[
+  {
+    "user_id": 1,
+    "subject": "Rebeldes encontrados en Dantooine",
+    "content": "Se encontró una célula rebelde en los fines de la capital de Dantooine. Se espera que la fuerza imperial se ponga en marcha. Eviten cualquier contacto con estos terroristas.",
+    "image_url": "https://cdnb.artstation.com/p/assets/images/images/021/471/037/large/garrett-brown-dan-03.jpg?1571808230"
+  },
+  {
+    "user_id": 1,
+    "subject": "Aumentan las patrullas en el Borde Exterior",
+    "content": "Las fuerzas imperiales han incrementado las patrullas en el Borde Exterior tras reportes de actividad rebelde. Se insta a los ciudadanos a reportar cualquier actividad sospechosa a las autoridades imperiales más cercanas.",
+    "image_url": ""
+  },
+  {
+    "user_id": 1,
+    "subject": "Nuevos TIE Fighters desplegados",
+    "content": "La flota imperial ha comenzado a desplegar los nuevos modelos de TIE Fighters, con mejoras significativas en velocidad y potencia de fuego. Los pilotos rebeldes deberán ser más cuidadosos que nunca al enfrentarse a estas naves superiores.",
+    "image_url": ""
+  },
+  {
+    "user_id": 1,
+    "subject": "Celebración del Día del Imperio",
+    "content": "Se anuncia la celebración anual del Día del Imperio en Coruscant. Habrá desfiles militares, demostraciones de las fuerzas armadas imperiales y fuegos artificiales. Se espera la presencia del Emperador Palpatine.",
+    "image_url": ""
+  },
+  {
+    "user_id": 1,
+    "subject": "Nueva Estrella de la Muerte en construcción",
+    "content": "El Imperio ha comenzado la construcción de una nueva Estrella de la Muerte. La estación espacial estará equipada con un superláser capaz de destruir planetas enteros. Los ingenieros imperiales prometen que esta vez no tendrán puntos débiles explotables.",
+    "image_url": "https://lumiere-a.akamaihd.net/v1/images/Death-Star-I-copy_36ad2500.jpeg"
+  },
+  {
+    "user_id": 1,
+    "subject": "Jugosa recompensa por androides",
+    "content": "Se ha anunciado una recompensa por los androides rebeldes. Cualquier androide que se entregue a las fuerzas rebeldes será recompensado con 1000 créditos.",
+    "image_url": "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/r2-d2-c-3po-blueprint-denny-h.jpg"
+  }
+]
+
+### Recuperar todos los replies por post_id
+GET {{baseUrl}}/replies/8
+
+
+### Crear un reply
+POST {{baseUrl}}/replies
+Content-Type: application/json
+
+{
+  "post_id": 7,
+  "content": "Este es un reply",
+  "user_id": 1
+}
+
+
+### Crear muchos replies
+POST {{baseUrl}}/replies/many
+Content-Type: application/json
+
+[
+  {
+    "post_id": 8,
+    "content": "Me gusto mucho",
+    "user_id": 1
+  },
+  {
+    "post_id": 8,
+    "content": "Creo que tienen razon",
+    "user_id": 1
+  },
+  {
+    "post_id": 8,
+    "content": "Viva el Imperio",
+    "user_id": 1
+  },
+  {
+    "post_id": 8,
+    "content": "Saben algo de Tarkin?",
+    "user_id": 1
+  }
+]
+
+

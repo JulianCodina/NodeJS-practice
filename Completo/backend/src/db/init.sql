@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  subject TEXT,
-  body TEXT,
-  image_url TEXT,
   user_id INTEGER,
+  subject TEXT,
+  content TEXT,
+  image_url TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -18,9 +18,26 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS replies (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER,
-  body TEXT,
+  content TEXT,
   user_id INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (post_id) REFERENCES posts(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS post_likes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  post_id INTEGER,
+  user_id INTEGER,
+  FOREIGN KEY (post_id) REFERENCES posts(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS reply_likes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  reply_id INTEGER,
+  user_id INTEGER,
+  FOREIGN KEY (reply_id) REFERENCES replies(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
