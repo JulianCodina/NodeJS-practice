@@ -14,16 +14,24 @@ export function getAllReplies(post_id) {
     .all(post_id);
 }
 
-export function createReply(post_id, content, user_id) {
+export function createReply(post_id, content, user_id, created_at) {
   try {
-    const query = db.prepare(
-      "INSERT INTO replies (post_id, content, user_id) VALUES (?, ?, ?)"
-    );
-    const info = query.run(post_id, content, user_id);
-
+    const query = created_at
+      ? db.prepare(
+          "INSERT INTO replies (post_id, content, user_id, created_at) VALUES (?, ?, ?, ?)"
+        )
+      : db.prepare(
+          "INSERT INTO replies (post_id, content, user_id) VALUES (?, ?, ?)"
+        );
+    
+    const params = created_at 
+      ? [post_id, content, user_id, created_at]
+      : [post_id, content, user_id];
+      
+    const info = query.run(...params);
     return info.lastInsertRowid;
   } catch (error) {
-    console.error("Error in createPost:", error.message);
+    console.error("Error in createReply:", error.message);
     console.error("Error details:", error);
     throw error;
   }
@@ -34,9 +42,9 @@ export function createManyReply(replies) {
 
   for (const reply of replies) {
     try {
-      const { post_id, content, user_id } = reply;
+      const { post_id, content, user_id, created_at } = reply;
 
-      const replyId = createReply(post_id, content, user_id);
+      const replyId = createReply(post_id, content, user_id, created_at);
       results.push({ success: true, replyId });
     } catch (error) {
       console.error("Error creating reply:", error);
@@ -48,4 +56,16 @@ export function createManyReply(replies) {
     }
   }
   return results;
+}
+
+export function deleteReply(id) {
+  try {
+    const query = db.prepare("DELETE FROM replies WHERE id = ?");
+    const info = query.run(id);
+    return info.changes;
+  } catch (error) {
+    console.error("Error in deletePost:", error.message);
+    console.error("Error details:", error);
+    throw error;
+  }
 }

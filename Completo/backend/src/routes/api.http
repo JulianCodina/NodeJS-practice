@@ -6,23 +6,21 @@ GET {{baseUrl}}/posts
 ### Recuperar todos los post por asunto
 GET {{baseUrl}}/posts/re
 
-### Crear un post con POST
+### Crear un post
 POST {{baseUrl}}/posts
 Content-Type: application/json
 
 {
   "user_id": 1,
-  "subject": "Rebeldes encontrados en Dantooine",
-  "content": "Se encontró una célula rebelde en los fines de la capital de Dantooine. Se espera que la fuerza imperial se ponga en marcha. Eviten cualquier contacto con estos terroristas.",
-  "image_url": "https://cdnb.artstation.com/p/assets/images/images/021/471/037/large/garrett-brown-dan-03.jpg?1571808230"
+  "subject": "Post Prueba",
+  "content": "Contenido de prueba",
+  "created_at": "2025-10-17"
 }
 
-
-### Eliminar un post con DELETE
+### Eliminar un post
 DELETE {{baseUrl}}/posts/6
 
-
-### Crear muchos post con POST
+### Crear muchos post
 POST {{baseUrl}}/posts/many
 Content-Type: application/json
 
@@ -31,54 +29,68 @@ Content-Type: application/json
     "user_id": 1,
     "subject": "Rebeldes encontrados en Dantooine",
     "content": "Se encontró una célula rebelde en los fines de la capital de Dantooine. Se espera que la fuerza imperial se ponga en marcha. Eviten cualquier contacto con estos terroristas.",
-    "image_url": "https://cdnb.artstation.com/p/assets/images/images/021/471/037/large/garrett-brown-dan-03.jpg?1571808230"
+    "image_url": "https://cdnb.artstation.com/p/assets/images/images/021/471/037/large/garrett-brown-dan-03.jpg?1571808230",
+    "created_at": "2025-10-11"
   },
   {
     "user_id": 1,
     "subject": "Aumentan las patrullas en el Borde Exterior",
     "content": "Las fuerzas imperiales han incrementado las patrullas en el Borde Exterior tras reportes de actividad rebelde. Se insta a los ciudadanos a reportar cualquier actividad sospechosa a las autoridades imperiales más cercanas.",
-    "image_url": ""
+    "image_url": "",
+    "created_at": "2025-10-22"
   },
   {
     "user_id": 1,
     "subject": "Nuevos TIE Fighters desplegados",
     "content": "La flota imperial ha comenzado a desplegar los nuevos modelos de TIE Fighters, con mejoras significativas en velocidad y potencia de fuego. Los pilotos rebeldes deberán ser más cuidadosos que nunca al enfrentarse a estas naves superiores.",
-    "image_url": ""
+    "image_url": "",
+    "created_at": "2025-10-13"
   },
   {
     "user_id": 1,
     "subject": "Celebración del Día del Imperio",
     "content": "Se anuncia la celebración anual del Día del Imperio en Coruscant. Habrá desfiles militares, demostraciones de las fuerzas armadas imperiales y fuegos artificiales. Se espera la presencia del Emperador Palpatine.",
-    "image_url": ""
+    "image_url": "",
+    "created_at": "2025-10-10"
   },
   {
     "user_id": 1,
     "subject": "Nueva Estrella de la Muerte en construcción",
     "content": "El Imperio ha comenzado la construcción de una nueva Estrella de la Muerte. La estación espacial estará equipada con un superláser capaz de destruir planetas enteros. Los ingenieros imperiales prometen que esta vez no tendrán puntos débiles explotables.",
-    "image_url": "https://lumiere-a.akamaihd.net/v1/images/Death-Star-I-copy_36ad2500.jpeg"
+    "image_url": "https://lumiere-a.akamaihd.net/v1/images/Death-Star-I-copy_36ad2500.jpeg",
+    "created_at": "2025-10-15"
   },
   {
     "user_id": 1,
     "subject": "Jugosa recompensa por androides",
     "content": "Se ha anunciado una recompensa por los androides rebeldes. Cualquier androide que se entregue a las fuerzas rebeldes será recompensado con 1000 créditos.",
-    "image_url": "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/r2-d2-c-3po-blueprint-denny-h.jpg"
+    "image_url": "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/r2-d2-c-3po-blueprint-denny-h.jpg",
+    "created_at": "2025-10-16"
   }
 ]
 
-### Recuperar todos los replies por post_id
-GET {{baseUrl}}/replies/8
 
+
+
+
+
+
+
+### Recuperar todos los replies por post_id
+GET {{baseUrl}}/replies/1
 
 ### Crear un reply
 POST {{baseUrl}}/replies
 Content-Type: application/json
 
 {
-  "post_id": 7,
+  "post_id": 1,
   "content": "Este es un reply",
   "user_id": 1
 }
 
+### Eliminar un reply
+DELETE {{baseUrl}}/replies/2
 
 ### Crear muchos replies
 POST {{baseUrl}}/replies/many
@@ -86,25 +98,55 @@ Content-Type: application/json
 
 [
   {
-    "post_id": 8,
+    "post_id": 1,
     "content": "Me gusto mucho",
-    "user_id": 1
+    "user_id": 1,
+    "created_at": "2025-10-17 14:42:30"
   },
   {
-    "post_id": 8,
+    "post_id": 1,
     "content": "Creo que tienen razon",
-    "user_id": 1
+    "user_id": 1,
+    "created_at": "2025-10-17 14:42:45"
   },
   {
-    "post_id": 8,
+    "post_id": 1,
     "content": "Viva el Imperio",
-    "user_id": 1
+    "user_id": 1,
+    "created_at": "2025-10-17 14:42:50"
   },
   {
-    "post_id": 8,
+    "post_id": 1,
     "content": "Saben algo de Tarkin?",
-    "user_id": 1
+    "user_id": 1,
+    "created_at": "2025-10-17 14:42:00"
   }
 ]
+
+
+
+
+
+
+
+### Recuperar likes de posts por user_id
+GET {{baseUrl}}/likes/1
+
+### Recuperar likes de replies por user_id y post_id
+GET {{baseUrl}}/likes/1/1
+
+### Setear un like
+POST {{baseUrl}}/likes
+Content-Type: application/json
+
+{
+  "post_id": 1,
+  "user_id": 1,
+  "reply_id": 4
+}
+
+
+
+
 
 

@@ -16,12 +16,16 @@ async function testDatabase() {
     //
     //
     //
-    console.log("\n2. Insertando usuario...");
+    console.log("\n2. Insertando usuarios...");
     db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)").run(
-      "Julián",
+      "Admin",
       "hash123"
     );
-    console.log("✅ Usuario insertado");
+    db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)").run(
+      "Julian",
+      "hash123"
+    );
+    console.log("✅ Usuarios insertados");
     //
     //
     /*

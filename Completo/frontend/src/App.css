@@ -249,7 +249,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  width: 80%;
+  width: 100%;
 }
 .replies .msg .username {
   font-weight: bold;

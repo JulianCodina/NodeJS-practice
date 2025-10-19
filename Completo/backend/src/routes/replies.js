@@ -3,6 +3,7 @@ import {
   getAllReplies,
   createReply,
   createManyReply,
+  deleteReply,
 } from "../models/replies.js";
 
 const router = express.Router();
@@ -13,12 +14,6 @@ router.get("/:post_id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { post_id, content, user_id } = req.body;
-  createReply(post_id, content, user_id);
-  res.status(201).json({ message: "Reply creado" });
-});
-
-router.post("/", (req, res) => {
   try {
     const { post_id, content, user_id } = req.body;
 
@@ -26,14 +21,14 @@ router.post("/", (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Post created successfully",
+      message: "Reply created",
       results,
     });
   } catch (error) {
-    console.error("Error in POST /posts:", error);
+    console.error("Error in POST /replies:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Failed to create post",
+      error: error.message || "Failed to create reply",
       details: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
@@ -62,6 +57,25 @@ router.post("/many", (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message || "Failed to process replies",
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
+});
+
+router.delete("/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = deleteReply(id);
+    res.status(200).json({
+      success: true,
+      message: "Reply deleted",
+      result,
+    });
+  } catch (error) {
+    console.error("Error in DELETE /replies/:id:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to delete reply",
       details: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }

@@ -4,7 +4,7 @@ export function getAllPosts() {
   return db
     .prepare(
       `
-    SELECT p.*, u.id AS userId, u.username AS username,
+    SELECT p.*, u.username AS username,
       (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
       (SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replies
     FROM posts p
@@ -19,7 +19,7 @@ export function getAllPostsById(user_id) {
   return db
     .prepare(
       `
-    SELECT p.*, u.id AS userId, u.username AS username,
+    SELECT p.*, u.username AS username,
       (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
       (SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replies
     FROM posts p
@@ -35,7 +35,7 @@ export function SearchPost(searchTerm) {
   try {
     const query = db.prepare(
       `
-    SELECT p.*, u.id AS userId, u.username AS username,
+    SELECT p.*, u.username AS username,
       (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS likes,
       (SELECT COUNT(*) FROM replies WHERE post_id = p.id) AS replies
     FROM posts p
@@ -56,13 +56,21 @@ export function SearchPost(searchTerm) {
   }
 }
 
-export function createPost(user_id, subject, content, image_url) {
+export function createPost(user_id, subject, content, image_url, created_at) {
   try {
-    const query = db.prepare(
-      "INSERT INTO posts (user_id, subject, content, image_url) VALUES (?, ?, ?, ?)"
-    );
-    const info = query.run(user_id, subject, content, image_url || null);
-
+    const query = created_at
+      ? db.prepare(
+          "INSERT INTO posts (user_id, subject, content, image_url, created_at) VALUES (?, ?, ?, ?, ?)"
+        )
+      : db.prepare(
+          "INSERT INTO posts (user_id, subject, content, image_url) VALUES (?, ?, ?, ?)"
+        );
+    
+    const params = created_at 
+      ? [user_id, subject, content, image_url || null, created_at]
+      : [user_id, subject, content, image_url || null];
+      
+    const info = query.run(...params);
     return info.lastInsertRowid;
   } catch (error) {
     console.error("Error in createPost:", error.message);
@@ -76,9 +84,9 @@ export function createManyPost(posts) {
 
   for (const post of posts) {
     try {
-      const { user_id, subject, content, image_url } = post;
+      const { user_id, subject, content, image_url, created_at } = post;
 
-      const postId = createPost(user_id, subject, content, image_url || null);
+      const postId = createPost(user_id, subject, content, image_url || null, created_at);
       results.push({ success: true, postId });
     } catch (error) {
       console.error("Error creating post:", error);

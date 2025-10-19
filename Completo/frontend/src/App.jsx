@@ -2,12 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
 
-const userID = 1;
-const username = "Julián";
+const userID = 2;
+const username = "Julian";
 
 function App() {
   const [posts, setPosts] = useState();
   const [replies, setReplies] = useState();
+
+  const [newPost, setNewPost] = useState({
+    user_id: userID,
+    subject: "",
+    content: "",
+    image_url: "",
+  });
 
   const [userPostLikes, setUserPostLikes] = useState([3]);
   const [userReplyLikes, setUserReplyLikes] = useState([]);
@@ -16,17 +23,33 @@ function App() {
   const [postOpen, setPostOpen] = useState(null);
   const [replyValue, setReplyValue] = useState("");
 
-  function handleLike(postId, type) {
-    if (type === "post") {
-      if (userPostLikes.includes(postId)) {
-        setUserPostLikes(userPostLikes.filter((id) => id !== postId));
+  async function handleLike(postId, replyId = null) {
+    const like = {
+      post_id: postId,
+      user_id: userID,
+      reply_id: replyId,
+    };
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/likes`,
+        like
+      );
+      console.log("Like seteado:", response.data);
+    } catch (error) {
+      console.error("Error al crear el like:", error);
+    }
+    if (!replyId) {
+      if (userPostLikes.some((like) => like.post_id === postId)) {
+        setUserPostLikes(
+          userPostLikes.filter((like) => like.post_id !== postId)
+        );
         setPosts(
           posts.map((post) =>
             post.id === postId ? { ...post, likes: post.likes - 1 } : post
           )
         );
       } else {
-        setUserPostLikes([...userPostLikes, postId]);
+        setUserPostLikes([...userPostLikes, like]);
         setPosts(
           posts.map((post) =>
             post.id === postId ? { ...post, likes: post.likes + 1 } : post
@@ -34,25 +57,33 @@ function App() {
         );
       }
     } else {
-      if (userReplyLikes.includes(postId)) {
-        setUserReplyLikes(userReplyLikes.filter((id) => id !== postId));
+      if (
+        userReplyLikes.some(
+          (like) => like.post_id === postId && like.reply_id === replyId
+        )
+      ) {
+        setUserReplyLikes(
+          userReplyLikes.filter(
+            (like) => !(like.post_id === postId && like.reply_id === replyId)
+          )
+        );
         setReplies(
           replies.map((reply) =>
-            reply.id === postId ? { ...reply, likes: reply.likes - 1 } : reply
+            reply.id === replyId ? { ...reply, likes: reply.likes - 1 } : reply
           )
         );
       } else {
-        setUserReplyLikes([...userReplyLikes, postId]);
+        setUserReplyLikes([...userReplyLikes, like]);
         setReplies(
           replies.map((reply) =>
-            reply.id === postId ? { ...reply, likes: reply.likes + 1 } : reply
+            reply.id === replyId ? { ...reply, likes: reply.likes + 1 } : reply
           )
         );
       }
     }
   }
 
-  function handleReplies(postId) {
+  async function handleReplies(postId) {
     if (postOpen === postId) {
       setPostOpen(null);
       setOpenReplies(false);
@@ -60,26 +91,31 @@ function App() {
     }
     setPostOpen(postId);
     setOpenReplies(true);
-    const fetch = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/replies/${postId}`
-        );
-        const sortedReplies = [...response.data].sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        setReplies(sortedReplies);
-      } catch (error) {
-        console.error("Error al obtener los replies:", error);
-      }
-    };
-    fetch();
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/replies/${postId}`
+      );
+      const sortedReplies = [...response.data].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      console.log("Replies: ", sortedReplies);
+      setReplies(sortedReplies);
+
+      const likes = await axios.get(
+        `${import.meta.env.VITE_API_URL}/likes/${userID}/${postId}`
+      );
+      setUserReplyLikes(likes.data);
+      console.log("Replies Likes: ", likes.data);
+    } catch (error) {
+      console.error("Error al obtener los replies:", error);
+    }
   }
 
-  function handleReply(postId) {
+  async function handleReply(postId) {
     if (!replyValue.trim()) return;
 
     const newReply = {
+      id: Math.floor(Math.random() * 1000) * 3, // No me andaba el import del uuid asi que le meto esto ya fue
       post_id: postId,
       content: replyValue,
       user_id: userID,
@@ -97,11 +133,18 @@ function App() {
           `${import.meta.env.VITE_API_URL}/replies`,
           newReply
         );
+        console.log("Reply creado:", response.data);
         setPosts(
           posts.map((post) =>
             post.id === postId ? { ...post, replies: post.replies + 1 } : post
           )
         );
+
+        const replies = await axios.get(
+          `${import.meta.env.VITE_API_URL}/replies/${postId}`
+        );
+        setReplies(replies.data);
+        console.log("Replies: ", replies.data);
       } catch (error) {
         console.error("Error al crear el reply:", error);
         setReplies((prevReplies) => prevReplies.filter((r) => r !== newReply));
@@ -110,52 +153,52 @@ function App() {
     fetch();
   }
 
-  /*
-  const [post, setPost] = useState({
-    subject: "",
-    body: "",
-    imageUrl: "",
-    userId: 1,
-  });
+  async function deleteReply(postId, replyId) {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/replies/${replyId}`);
+      console.log("Reply eliminado:", replyId);
+      setReplies((prevReplies) => prevReplies.filter((r) => r.id !== replyId));
+      setPosts(
+        posts.map((post) =>
+          post.id === postId ? { ...post, replies: post.replies - 1 } : post
+        )
+      );
+    } catch (error) {
+      console.error("Error al eliminar el reply:", error);
+    }
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  async function handleCreatePost(event) {
+    event.preventDefault();
+    console.log("newPost: ", newPost);
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/posts`,
-        post
+        newPost
       );
       console.log("Post creado:", response.data);
-      alert("Post creado exitosamente!");
+      setNewPost({
+        user_id: userID,
+        subject: "",
+        content: "",
+        image_url: "",
+      });
+      const posts = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
+      setPosts(posts.data);
     } catch (error) {
       console.error("Error al crear el post:", error);
     }
-  };
+  }
 
-  const CreatePostForm = () => {
-    return (
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Título"
-          value={post.subject}
-          onChange={(e) => setPost({ ...post, subject: e.target.value })}
-        />
-        <textarea
-          placeholder="Contenido"
-          value={post.body}
-          onChange={(e) => setPost({ ...post, body: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="URL de la imagen"
-          value={post.imageUrl}
-          onChange={(e) => setPost({ ...post, imageUrl: e.target.value })}
-        />
-        <button type="submit">Crear Post</button>
-      </form>
-    );
-  };*/
+  async function deletePost(postId) {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/posts/${postId}`);
+      console.log("Post eliminado:", postId);
+      setPosts((prevPosts) => prevPosts.filter((p) => p.id !== postId));
+    } catch (error) {
+      console.error("Error al eliminar el post:", error);
+    }
+  }
 
   const first = useRef(true);
   useEffect(() => {
@@ -165,11 +208,14 @@ function App() {
     }
     const fetch = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/posts`
+        const posts = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
+        setPosts(posts.data);
+        console.log("Posts: ", posts.data);
+        const likes = await axios.get(
+          `${import.meta.env.VITE_API_URL}/likes/${userID}`
         );
-        setPosts(response.data);
-        console.log(response.data);
+        setUserPostLikes(likes.data);
+        console.log("Likes: ", likes.data);
       } catch (error) {
         console.error("Error al obtener los posts:", error);
       }
@@ -184,128 +230,181 @@ function App() {
         <img className="background" src="background.png" alt="background" />
       </div>
       <main>
+        <div className="sidebar">
+          <h2>Buscar</h2>
+          <input type="text" placeholder="Buscar" />
+          <h2>Crear Post</h2>
+          <form
+            onSubmit={handleCreatePost}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <input
+              type="text"
+              placeholder="Título"
+              value={newPost.subject}
+              onChange={(e) =>
+                setNewPost({ ...newPost, subject: e.target.value })
+              }
+            />
+            <textarea
+              placeholder="Contenido"
+              value={newPost.content}
+              onChange={(e) =>
+                setNewPost({ ...newPost, content: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              placeholder="URL de la imagen"
+              value={newPost.image_url}
+              onChange={(e) =>
+                setNewPost({ ...newPost, image_url: e.target.value })
+              }
+            />
+            <button type="submit">Crear Post</button>
+          </form>
+          <h2>Perfil</h2>
+
+          <button onClick={() => handleLogout()}>Cerrar Sesión</button>
+        </div>
         <div className="posts">
-          <div id="column1" className="column">
-            {posts
-              ? posts.map((post, index) => {
-                  if (index % 2 === 0) {
-                    return (
-                      <article
-                        key={index}
-                        className={postOpen === post.id ? "selected" : ""}
-                      >
-                        <h2>{post.subject}</h2>
-                        <p>{post.content}</p>
-                        {post.image_url && (
-                          <img
-                            className="postImg"
-                            src={post.image_url}
-                            alt={post.subject}
-                          />
-                        )}
-                        <div className="footer">
-                          <div className="info">
-                            <p>Por: {post.username}</p>
-                            <p>
-                              Fecha:{" "}
-                              {post.created_at
-                                .slice(0, 10)
-                                .replaceAll("-", "/")}
-                            </p>
-                          </div>
-                          <div className="actions">
-                            <button onClick={() => handleLike(post.id, "post")}>
-                              <img
-                                className="icon"
-                                src={
-                                  userPostLikes.some((id) => id === post.id)
-                                    ? "likeOn.png"
-                                    : "like.png"
-                                }
-                                alt="like"
-                              />
-                              {post.likes}
-                            </button>
-                            <button onClick={() => handleReplies(post.id)}>
-                              <img
-                                className="icon"
-                                src={
-                                  postOpen === post.id
-                                    ? "replyOn.png"
-                                    : "reply.png"
-                                }
-                                alt="reply"
-                              />
-                              {post.replies}
-                            </button>
-                          </div>
+          <div className="column">
+            {posts &&
+              posts.map((post, index) => {
+                if (index % 2 === 0) {
+                  return (
+                    <article
+                      key={index}
+                      className={postOpen === post.id ? "selected" : ""}
+                    >
+                      <h2>{post.subject}</h2>
+                      <p>{post.content}</p>
+                      {post.image_url && (
+                        <img
+                          className="postImg"
+                          src={post.image_url}
+                          alt={post.subject}
+                        />
+                      )}
+                      <div className="footer">
+                        <div className="info">
+                          <p>Por: {post.username}</p>
+                          <p>
+                            Fecha:{" "}
+                            {post.created_at.slice(0, 10).replaceAll("-", "/")}
+                          </p>
                         </div>
-                      </article>
-                    );
-                  }
-                })
-              : null}
+                        <div className="actions">
+                          {post.user_id === userID && (
+                            <button onClick={() => deletePost(post.id)}>
+                              <img
+                                className="icon"
+                                src="delete.png"
+                                alt="delete"
+                              />
+                            </button>
+                          )}
+                          <button onClick={() => handleLike(post.id)}>
+                            <img
+                              className="icon"
+                              src={
+                                userPostLikes.some(
+                                  (like) => like.post_id === post.id
+                                )
+                                  ? "likeOn.png"
+                                  : "like.png"
+                              }
+                              alt="like"
+                            />
+                            {post.likes}
+                          </button>
+                          <button onClick={() => handleReplies(post.id)}>
+                            <img
+                              className="icon"
+                              src={
+                                postOpen === post.id
+                                  ? "replyOn.png"
+                                  : "reply.png"
+                              }
+                              alt="reply"
+                            />
+                            {post.replies}
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                }
+              })}
           </div>
-          <div id="column2" className="column">
-            {posts
-              ? posts.map((post, index) => {
-                  if (index % 2 !== 0) {
-                    return (
-                      <article
-                        key={index}
-                        className={postOpen === post.id ? "selected" : ""}
-                      >
-                        <h2>{post.subject}</h2>
-                        <p>{post.content}</p>
-                        {post.image_url && (
-                          <img
-                            className="postImg"
-                            src={post.image_url}
-                            alt={post.subject}
-                          />
-                        )}
-                        <div className="footer">
-                          <div className="info">
-                            <p>Por: {post.username}</p>
-                            <p>
-                              Fecha:{" "}
-                              {post.created_at
-                                .slice(0, 10)
-                                .replaceAll("-", "/")}
-                            </p>
-                          </div>
-                          <div className="actions">
-                            <button onClick={() => handleLike(post.id, "post")}>
-                              <img
-                                className="icon"
-                                src={
-                                  userPostLikes.some((id) => id === post.id)
-                                    ? "likeOn.png"
-                                    : "like.png"
-                                }
-                                alt="like"
-                              />
-                              {post.likes}
-                            </button>
-                            <button onClick={() => handleReplies(post.id)}>
-                              <img
-                                className="icon"
-                                src={
-                                  postOpen === post.id
-                                    ? "replyOn.png"
-                                    : "reply.png"
-                                }
-                                alt="reply"
-                              />
-                              {post.replies}
-                            </button>
-                          </div>
+          <div className="column">
+            {posts &&
+              posts.map((post, index) => {
+                if (index % 2 !== 0) {
+                  return (
+                    <article
+                      key={index}
+                      className={postOpen === post.id ? "selected" : ""}
+                    >
+                      <h2>{post.subject}</h2>
+                      <p>{post.content}</p>
+                      {post.image_url && (
+                        <img
+                          className="postImg"
+                          src={post.image_url}
+                          alt={post.subject}
+                        />
+                      )}
+                      <div className="footer">
+                        <div className="info">
+                          <p>Por: {post.username}</p>
+                          <p>
+                            Fecha:{" "}
+                            {post.created_at.slice(0, 10).replaceAll("-", "/")}
+                          </p>
                         </div>
-                      </article>
-                    );
-                  }
-                })
-              : null}
+                        <div className="actions">
+                          {post.user_id === userID && (
+                            <button onClick={() => deletePost(post.id)}>
+                              <img
+                                className="icon"
+                                src="delete.png"
+                                alt="delete"
+                              />
+                            </button>
+                          )}
+                          <button onClick={() => handleLike(post.id)}>
+                            <img
+                              className="icon"
+                              src={
+                                userPostLikes.some(
+                                  (like) => like.post_id === post.id
+                                )
+                                  ? "likeOn.png"
+                                  : "like.png"
+                              }
+                              alt="like"
+                            />
+                            {post.likes}
+                          </button>
+                          <button onClick={() => handleReplies(post.id)}>
+                            <img
+                              className="icon"
+                              src={
+                                postOpen === post.id
+                                  ? "replyOn.png"
+                                  : "reply.png"
+                              }
+                              alt="reply"
+                            />
+                            {post.replies}
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                }
+              })}
           </div>
         </div>
         {openReplies && (
@@ -336,7 +435,6 @@ function App() {
               ) : (
                 replies &&
                 [...replies.filter((reply) => reply.post_id === postOpen)]
-                  .sort((a, b) => b.likes - a.likes)
                   .sort((a, b) => a.created_at - b.created_at)
                   .map((reply) => (
                     <div className="reply" key={reply.id}>
@@ -348,18 +446,33 @@ function App() {
                             reply.created_at.slice(0, 10).replaceAll("-", "/")}
                         </p>
                       </div>
-                      <button onClick={() => handleLike(reply.id, "reply")}>
-                        <img
-                          className="icon"
-                          src={
-                            userReplyLikes.some((id) => id === reply.id)
-                              ? "likeOn.png"
-                              : "like.png"
-                          }
-                          alt="like"
-                        />
-                        {reply.likes !== 0 && reply.likes}
-                      </button>
+                      <div className="buttons" style={{ display: "flex" }}>
+                        {reply.user_id === userID && (
+                          <button
+                            onClick={() => deleteReply(postOpen, reply.id)}
+                          >
+                            <img
+                              className="icon"
+                              src="delete.png"
+                              alt="delete"
+                            />
+                          </button>
+                        )}
+                        <button onClick={() => handleLike(postOpen, reply.id)}>
+                          <img
+                            className="icon"
+                            src={
+                              userReplyLikes.some(
+                                (like) => like.reply_id === reply.id
+                              )
+                                ? "likeOn.png"
+                                : "like.png"
+                            }
+                            alt="like"
+                          />
+                          {reply.likes !== 0 && reply.likes}
+                        </button>
+                      </div>
                     </div>
                   ))
               )}
