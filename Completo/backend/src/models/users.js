@@ -4,7 +4,7 @@ export function getUserById(userId) {
   return db
     .prepare(
       `
-    SELECT id, username, created_at
+    SELECT id, username, password_hash, created_at
     FROM users 
     WHERE id = ?
     ORDER BY created_at DESC
@@ -16,7 +16,7 @@ export function getUserByUsername(username) {
   return db
     .prepare(
       `
-    SELECT id, username, created_at
+    SELECT id, username, password_hash, created_at
     FROM users 
     WHERE username = ?
     ORDER BY created_at DESC
@@ -25,7 +25,7 @@ export function getUserByUsername(username) {
     .get(username);
 }
 
-export function ChangeName(userId, username) {
+export function changeName(userId, username) {
   return db
     .prepare(
       `
@@ -37,7 +37,7 @@ export function ChangeName(userId, username) {
     .run(username, userId);
 }
 
-export function ChangePassword(userId, password) {
+export function changePassword(userId, password) {
   return db
     .prepare(
       `
@@ -57,4 +57,15 @@ export function createUser(username, password) {
   );
   const info = query.run(username, password);
   return info.lastInsertRowid;
+}
+
+export function deleteUser(userId) {
+  return db
+    .prepare(
+      `
+    DELETE FROM users 
+    WHERE id = ?
+    `
+    )
+    .run(userId);
 }

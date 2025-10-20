@@ -129,6 +129,11 @@ Content-Type: application/json
 
 
 
+
+
+
+
+
 ### Recuperar likes de posts por user_id
 GET {{baseUrl}}/likes/1
 
@@ -150,3 +155,37 @@ Content-Type: application/json
 
 
 
+
+
+
+
+
+### Obtener el usuario por id
+GET {{baseUrl}}/auth/5
+
+### Cambiar el nombre del usuario
+PATCH {{baseUrl}}/auth/5/username/Julian
+
+### Cambiar la contraseña del usuario
+PATCH {{baseUrl}}/auth/5/password/123asd
+
+### Crear un usuario
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "Julian",
+  "password": "123asd"
+}
+
+### Eliminar el usuario
+DELETE {{baseUrl}}/auth/2
+
+### Iniciar sesión
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "Julian",
+  "password": "123asd"
+}
