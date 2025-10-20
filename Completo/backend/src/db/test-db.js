@@ -18,7 +18,7 @@ async function testDatabase() {
     //
     console.log("\n2. Insertando usuarios...");
     db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)").run(
-      "Admin",
+      "Empire News",
       "hash123"
     );
     db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)").run(

@@ -39,6 +39,12 @@ router.post("/", (req, res) => {
   try {
     const { user_id, subject, content, image_url } = req.body;
 
+    if (!user_id || !subject || !content) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields",
+      });
+    }
     const postId = createPost(user_id, subject, content, image_url);
 
     res.status(201).json({
