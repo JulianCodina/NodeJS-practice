@@ -1,4 +1,18 @@
-# 🚀 Foro de Discusión - Proyecto Full Stack
+# 🚀 Práctica de Node.js - Fundamentos y Full Stack
+
+> Este repositorio contiene ejercicios y prácticas de Node.js, culminando con el desarrollo de **Holonet**, un foro de discusión full stack que sirve como proyecto integrador de los conceptos aprendidos.
+
+## 📚 Acerca de este Proyecto
+
+Este proyecto forma parte de mi proceso de aprendizaje de Node.js y desarrollo full stack. A través de diferentes ejercicios y prácticas, he ido construyendo una base sólida en:
+
+- Fundamentos de Node.js y JavaScript en el servidor
+- Creación de APIs RESTful con Express
+- Manejo de bases de datos con SQLite
+- Autenticación y manejo de sesiones
+- Desarrollo frontend con React
+
+El proyecto final, **Holonet**, es un foro de discusión que implementa todos estos conceptos en una aplicación web completa y funcional.
 
 ## 🛠️ Tecnologías Implementadas
 
