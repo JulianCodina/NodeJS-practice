@@ -1,0 +1,365 @@
+.Home {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 10;
+}
+
+main {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 180px;
+  gap: 2rem;
+  width: 100%;
+}
+
+.posts {
+  display: flex;
+  width: 60%;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.loading h3,
+.loading p {
+  background-color: transparent;
+  background: linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    )
+    transparent;
+  background-size: 200% 100%;
+  background-position-x: 180%;
+  animation: 1s loading ease-in-out infinite;
+  width: 80%;
+}
+
+@keyframes loading {
+  to {
+    background-position-x: -20%;
+  }
+}
+
+.loading h3 {
+  height: 30px;
+  border-radius: 4px;
+  animation-delay: 0.05s;
+}
+
+.loading p {
+  height: 120px;
+  border-radius: 4px;
+  animation-delay: 0.06s;
+}
+
+.posts .column {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 20px;
+}
+
+.posts article {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  box-sizing: border-box;
+  text-align: left;
+  background-color: transparent;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease-in-out;
+  border: 1px solid transparent;
+}
+.posts .selected {
+  box-shadow: inset 0px -20px 100px -50px #013a66;
+  border: 1px solid #013a66;
+}
+
+.posts article h2 {
+  margin: 0;
+  background-color: #014271a7;
+  color: #dfe8b4;
+  border-radius: 20px;
+  padding: 15px;
+  line-height: 1.5;
+  font-style: italic;
+  font-size: 18px;
+  width: 100%;
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+.posts article p {
+  margin: 15px 0;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.posts .postImg {
+  max-width: 100%;
+  height: auto;
+  max-height: 150px;
+  border-radius: 20px;
+  border: 2px solid #c2d0da;
+  cursor: pointer;
+}
+
+.posts .footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px;
+}
+.posts .footer .info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 15px;
+}
+.posts .footer .info p {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+}
+.posts .footer .actions {
+  display: flex;
+  gap: 10px;
+  padding-right: 15px;
+}
+.posts .footer .actions button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.posts .footer .actions .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.replies {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 0 auto;
+  background-color: #000306;
+  border-top: 2px solid #013a66;
+  border-left: 2px solid #013a66;
+  box-shadow: 0 15px 35px rgba(1, 44, 76, 0.3);
+  z-index: 10;
+  width: 300px;
+  height: calc(100vh - 180px);
+  border-radius: 20px 0 0 0px;
+  animation: slideIn 0.5s ease-in-out;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.replies .header {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  background-color: #014271a7;
+  padding: 15px 20px;
+  box-sizing: border-box;
+}
+.replies .header h2 {
+  margin: 0;
+  color: #dfe8b4;
+  line-height: 1.2;
+  font-style: italic;
+}
+.replies .header button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  padding: 0;
+  margin: 0;
+  z-index: 11;
+}
+.replies .header button img {
+  height: 100%;
+  width: 100%;
+}
+
+.replies .repliesList {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 15px 15px;
+  height: 100%;
+  gap: 15px;
+}
+.replies .reply {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+.replies .msg {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+.replies .msg .username {
+  font-weight: bold;
+}
+.replies .label {
+  font-size: 10px;
+  padding-top: 5px !important;
+  opacity: 0.5;
+}
+.replies .msg p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+.replies .reply button {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+.replies .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.replies .newReply {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: 1px solid #c2d0da;
+}
+.replies .newReply input {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #ffffff;
+}
+.replies .newReply button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar {
+  position: fixed;
+  top: 10;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 100vh;
+  background-color: #000306;
+  border-top: 2px solid #013a66;
+  border-right: 2px solid #013a66;
+  box-shadow: 0 15px 35px rgba(1, 44, 76, 0.3);
+  padding: 20px;
+  z-index: 10;
+  border-radius: 0 20px 20px 0;
+}
+
+.sidebar h2 {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+.sidebar .divider {
+  margin: 2px 0 15px;
+  background-color: #012c4c;
+  height: 1px;
+  width: 100%;
+}
+.sidebar h3 {
+  margin: 0 0 5px 0;
+  line-height: 1.5;
+}
+.sidebar input,
+textarea {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #ffffff;
+  height: 22px;
+}
+.sidebar textarea {
+  height: 20px;
+  max-height: 100px;
+  min-height: 20px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #012c4c;
+  border-radius: 10px;
+  width: 150px;
+  border: none;
+  cursor: pointer;
+  padding: 8px 10px;
+  gap: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+.sidebar button:hover {
+  background-color: #013a66;
+}
+.sidebar button p {
+  margin: 0;
+  max-height: 14px;
+}
+
+.sidebar img {
+  width: 15px;
+  height: 15px;
+}

@@ -7,7 +7,14 @@ import likesRouter from "./routes/likes.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.use("/posts", postsRouter);
 app.use("/replies", repliesRouter);

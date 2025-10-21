@@ -98,25 +98,25 @@ Content-Type: application/json
 
 [
   {
-    "post_id": 1,
+    "post_id": 6,
     "content": "Me gusto mucho",
     "user_id": 1,
     "created_at": "2025-10-17 14:42:30"
   },
   {
-    "post_id": 1,
+    "post_id": 5,
     "content": "Creo que tienen razon",
     "user_id": 1,
     "created_at": "2025-10-17 14:42:45"
   },
   {
-    "post_id": 1,
+    "post_id": 5,
     "content": "Viva el Imperio",
     "user_id": 1,
     "created_at": "2025-10-17 14:42:50"
   },
   {
-    "post_id": 1,
+    "post_id": 5,
     "content": "Saben algo de Tarkin?",
     "user_id": 1,
     "created_at": "2025-10-17 14:42:00"
@@ -146,8 +146,8 @@ Content-Type: application/json
 
 {
   "post_id": 1,
-  "user_id": 1,
-  "reply_id": 4
+  "user_id": null,
+  "reply_id": 8
 }
 
 
@@ -161,13 +161,19 @@ Content-Type: application/json
 
 
 ### Obtener el usuario por id
-GET {{baseUrl}}/auth/5
+GET {{baseUrl}}/auth/6
+
+### Obtener el usuario actual
+GET {{baseUrl}}/auth/me
 
 ### Cambiar el nombre del usuario
 PATCH {{baseUrl}}/auth/5/username/Julian
 
 ### Cambiar la contraseña del usuario
-PATCH {{baseUrl}}/auth/5/password/123asd
+PATCH {{baseUrl}}/auth/5/password/asd123
+
+### Eliminar el usuario
+DELETE {{baseUrl}}/auth/6
 
 ### Crear un usuario
 POST {{baseUrl}}/auth/register
@@ -175,11 +181,8 @@ Content-Type: application/json
 
 {
   "username": "Julian",
-  "password": "123asd"
+  "password": "asd123"
 }
-
-### Eliminar el usuario
-DELETE {{baseUrl}}/auth/2
 
 ### Iniciar sesión
 POST {{baseUrl}}/auth/login
@@ -187,5 +190,9 @@ Content-Type: application/json
 
 {
   "username": "Julian",
-  "password": "123asd"
+  "password": "asd123"
 }
+
+### Cerrar sesión
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
