@@ -284,7 +284,7 @@ function Home() {
         console.error("Error al obtener los posts:", error);
         setPosts(postsinbackend);
         setUserPostLikes([]);
-        alert("Sin conexión con el backend");
+        alert("Sin conexión con el backend, se usan datos de prueba");
       }
     };
     fetch();
@@ -352,7 +352,13 @@ function Home() {
               }
             />
             <div className="divider" />
-            <button type="submit">
+            <button
+              type="submit"
+              className={
+                (!newPost.subject.trim() || !newPost.content.trim()) &&
+                "disabled"
+              }
+            >
               <img src="create.png" alt="create" />
               <p>Crear Post</p>
             </button>

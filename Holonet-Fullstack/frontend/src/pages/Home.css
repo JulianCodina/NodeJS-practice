@@ -354,6 +354,14 @@ textarea {
 .sidebar button:hover {
   background-color: #013a66;
 }
+.sidebar button.disabled {
+  background-color: #012c4c;
+  opacity: 0.5;
+  cursor: default;
+}
+.sidebar button.disabled:hover {
+  background-color: #012c4c;
+}
 .sidebar button p {
   margin: 0;
   max-height: 14px;

@@ -75,17 +75,17 @@
   flex: 1;
 }
 
-.form-group {
+.profile-content .form-group {
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.profile-content .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: #8ab4f8;
 }
 
-.form-group input {
+.profile-content .form-group input {
   width: 100%;
   padding: 0.75rem;
   background-color: #000b14;
@@ -95,31 +95,31 @@
   font-size: 1rem;
 }
 
-.form-group input:focus {
+.profile-content .form-group input:focus {
   outline: none;
   border-color: #5d9cec;
   box-shadow: 0 0 0 2px rgba(93, 156, 236, 0.3);
 }
 
-.password-section {
+.profile-content .password-section {
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid #013a66;
 }
 
-.password-section h3 {
+.profile-content .password-section h3 {
   margin-top: 0;
   color: #fff;
 }
 
-.hint {
+.profile-content .hint {
   color: #5a7fb5;
   font-size: 0.9rem;
   margin-top: 0.5rem;
   margin-bottom: 1.5rem;
 }
 
-.save-button {
+.profile-content .save-button {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -134,11 +134,11 @@
   transition: all 0.2s ease-in-out;
 }
 
-.save-button:hover {
+.profile-content .save-button:hover {
   background-color: #013a66;
 }
 
-.save-button:disabled {
+.profile-content .save-button:disabled {
   background-color: #5a7fb5;
   cursor: not-allowed;
 }

@@ -1,5 +1,8 @@
 # 🚀 Práctica de Node.js - Fundamentos y Full Stack
 
+![Holonet Preview](./holonet.jpg)
+
+
 > Este repositorio contiene ejercicios y prácticas de Node.js, culminando con el desarrollo de **Holonet**, un foro de discusión full stack que sirve como proyecto integrador de los conceptos aprendidos.
 
 ## 📚 Acerca de este Proyecto
@@ -24,6 +27,8 @@ El proyecto final, **Holonet**, es un foro de discusión que implementa todos es
 - **Vite** - Herramienta de construcción y servidor de desarrollo
 - **CSS Vanilla** - Estilos personalizados sin frameworks
 - **Axios** - Cliente HTTP para peticiones a la API
+
+> **Nota sobre el diseño:** Este proyecto está enfocado principalmente en la práctica de desarrollo backend. Como tal, la interfaz de usuario no está optimizada para ser responsive y se recomienda su visualización en pantallas de escritorio.
 
 ### Backend
 
